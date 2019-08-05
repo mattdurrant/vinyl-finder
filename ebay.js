@@ -1,6 +1,7 @@
 const request           = require('request')
 const requestPromise    = require('request-promise')
 const ora               = require('ora')
+const config        = require('./config.json')
 
 async function getVinyl(albums) {
     let results = [],
@@ -16,17 +17,17 @@ async function getVinyl(albums) {
         let url = `https://svcs.ebay.com/services/search/FindingService/v1`
             + `?OPERATION-NAME=findItemsAdvanced`
             + `&SERVICE-VERSION=1.0.0`
-            + `&SECURITY-APPNAME=MattDurr-VinylSea-PRD-eb447253d-60f5ced9`
+            + `&SECURITY-APPNAME=${config.ebay.appName}`
             + `&GLOBAL-ID=EBAY-GB`
             + `&RESPONSE-DATA-FORMAT=JSON`
-            + `&buyerPostalCode=SO239PA`
+            + `&buyerPostalCode=${config.ebay.postcode}`
             + `&REST-PAYLOAD`
             + `&categoryId=176985`
             + `&keywords=${keywords}`
             + `&paginationInput.entriesPerPage=10`
             + `&sortOrder=PricePlusShippingLowest`
             + `&itemFilter(0).name=MaxPrice`
-            + `&itemFilter(0).value=15.0`
+            + `&itemFilter(0).value=${config.ebay.maxprice}`
 
         spinner.text = `Search ebay for ${albums[i].albumName} - ${albums[i].artistName} vinyl`
   
@@ -41,7 +42,7 @@ async function getVinyl(albums) {
     }
     spinner.succeed(`${results.length} vinyl found`)
     
-    results = results.filter(r => r.totalPrice <= 20.0)
+    results = results.filter(r => r.totalPrice <= config.ebay.maxprice)
     return results
 }
 
