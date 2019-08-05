@@ -1,0 +1,16 @@
+{
+    "spotify":
+    {
+        "username": "mattdurrant",
+        "playlistIds2": "6uGAZ1PPWI447y6S9wQqMf",
+        "playlistIds": "5noq8iSiMjSLH2e9t11NOv,4eSeDm1JZLRz3LzTMIhuf4,6pWjuaR76tIu6v872F55jG,6uGAZ1PPWI447y6S9wQqMf,1gapnZTdVTICFHFi2uR4aI,4mY1RXi5GYYpKI71crScD7,1mmQw1jM53Gn0S86OIkFLf,2IrkfqzuVlYNUqQsNhd5dw,33ITE4NqI7BWYSMqkqecoU,0kpRLT9H47jMFObGnfJSeO,2C4GhJXpiE34lqoqS58BgG,2S1zz3TCWfXp1p5wUXpwM6,6y9mb5tubxhSGcHRsX8cZC,0ryLtf0WdGPu9CUyMeXZav,5QDxtZb50DBbSbQ4Un8715,7zi88II6MYyJSjmpSOptyj,7s3N90tJmUoJFSmtoJTnrr",
+        "api":
+        {
+            "clientId": "096503e03c684c859936847779ef6aa9",
+            "clientSecret": "97ee5a42e137486fb9e4c61c8f3a323c"
+        }
+    },
+    "minimumTrackLength": 7,
+    "albumsInList" : 100,
+    "filename" : "vinyl.html"
+}
