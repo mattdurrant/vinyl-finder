@@ -18,10 +18,14 @@ function buildHtml(results) {
     header += `<link rel='stylesheet' id='genericons-css'  href='http://www.mattdurrant.com/wp-content/themes/independent-publisher/fonts/genericons/genericons.css?ver=3.1' type='text/css' media='all' />`
     header += `<link rel='stylesheet' id='customizer-css'  href='http://www.mattdurrant.com/wp-admin/admin-ajax.php?action=independent_publisher_customizer_css&#038;ver=1.7' type='text/css' media='all' />`
     header += `<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>`
+    header += `<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>`
     header += `<script type="text/javascript">function setEndTimes() { var endTimes = document.getElementsByClassName("endTime"); for (i = 0; i < endTimes.length; i++) { endTimes[i].innerHTML = 'Ends ' + moment(endTimes[i].innerHTML).fromNow() + '.'; } } window.onload = setEndTimes;</script>`
+    header += `<link rel='stylesheet' href='https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css' type='text/css' media='all' />`
+    header += `<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>`
+    header += `<script>$(document).ready( function () { $('#results').DataTable({ paging: false, "columns": [{ "orderable": false }, null, null ] }); } );</script>`
 
     let body = `<div id="page" class="site"><div class="entry-content e-content"><header class="entry-header"><h1 class="entry-title p-name">Vinyl Finder</h1></header>`
-    body += `<table border="1"><tbody>`
+    body += `<table id="results" border="1"><thead><tr><th></th><th>Title</th><th>Price</th></tr></thead><tbody>`
 
     results = results.sort(
         function(a, b) {
@@ -34,7 +38,8 @@ function buildHtml(results) {
         body += `<td class="normal" style="vertical-align:top"><a href="${results[i].url}">${results[i].title}</a><br />`
         if (results[i].subtitle !== null)
             body += `${results[i].subtitle}<br />`
-        body += `&pound;${results[i].totalPrice}<br />${results[i].listingType}. <span class="endTime">${results[i].endTime}</span></td>`
+        body += `${results[i].listingType}. <span class="endTime">${results[i].endTime}</span></td>`
+        body += `<td>&pound;${results[i].totalPrice}</td>`
         body += `</tr>`
     }
     body += `</tbody></table></div></div>`

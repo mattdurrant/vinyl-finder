@@ -10,15 +10,16 @@ async function upload(fileName) {
     const client = new ftp.Client()
     try {
         await client.access({
-            host: config.ftp.host,
-            user: config.ftp.username,
-            password: config.ftp.password,
+            host: config.website.ftp.host,
+            user: config.website.ftp.username,
+            password: config.website.ftp.password,
         })
         await client.cd(`public_html`)
         await client.upload(fs.createReadStream(fileName), fileName)
         spinner.succeed(`${fileName} uploaded.`)
     }
     catch(err) {
+        console.log(err)
         spinner.fail(`${fileName} failed to upload.`)
     }   
     
