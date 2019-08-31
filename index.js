@@ -2,8 +2,17 @@ const spotify   = require('./spotify.js')
 const ebay      = require('./ebay.js')
 const output    = require('./output.js')
 const uploader  = require('./uploader.js')
-
+const schedule  = require('node-schedule')
+ 
 ; (async () => {
+  console.log('Lets get started')
+  schedule.scheduleJob('0 * * * *', function(){
+    console.log(`Finding vinyl at ${new Date().toISOString()}`)
+    findVinyl()
+  });
+})()
+
+async function findVinyl() {
   let albums = await spotify.getAlbums()
   let results = await ebay.getVinyl(albums)
 
@@ -11,5 +20,5 @@ const uploader  = require('./uploader.js')
     return
 
   let htmlFile = await output.writeToHtml(results)
-  await uploader.upload(htmlFile)
-})()
+  //await uploader.upload(htmlFile)
+}
