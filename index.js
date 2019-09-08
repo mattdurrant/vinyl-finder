@@ -5,7 +5,12 @@ const uploader  = require('./uploader.js')
 const schedule  = require('node-schedule')
  
 ; (async () => {
-  console.log('Lets get started')
+  console.log('Initial search.')
+  
+  await findVinyl();
+
+  console.log('Switching to hourly searches.')
+
   schedule.scheduleJob('0 * * * *', function(){
     console.log(`Finding vinyl at ${new Date().toISOString()}`)
     findVinyl()
@@ -20,5 +25,5 @@ async function findVinyl() {
     return
 
   let htmlFile = await output.writeToHtml(results)
-  //await uploader.upload(htmlFile)
+  await uploader.upload(htmlFile)
 }

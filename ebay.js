@@ -2,6 +2,7 @@ const request           = require('request')
 const requestPromise    = require('request-promise')
 const ora               = require('ora')
 const config            = require('./config.json')
+const moment            = require('moment')
 
 async function getVinyl(albums) {
     let results = [],
@@ -16,19 +17,20 @@ async function getVinyl(albums) {
         }
     }
     
-    results = results.filter(r => r.totalPrice <= 25.0)
-    
+    results = results.filter(r => r.totalPrice <= config.ebay.maxprice)
+    results = results.filter(r => r.listingType == 'StoreInventory' || r.listingType == 'FixedPrice' || moment.duration(moment(r.endTime, "YYYY-MM-DDTHH:mm:SS.SSSSZ").diff(moment())).asHours() < 24)
+
     spinner.succeed(`${results.length} vinyl records found`)
     return results
 }
 
 async function getAlbums(albumName, artistName, spinner) {
     spinner.text = `Searching ebay for ${albumName} - ${artistName} vinyl`
-    albumName = albumName.replace(/ /g, ',')
-    artistName = artistName.replace(/ /g, ',')
-    let album = albumName + ' ' + artistName + ' -cd -cassette -7" -tote  '
-    album = album.replace(/&/g, '%20')
-    let keywords = encodeURI(album)
+    let encodedAlbumName = albumName.replace(/ /g, ',').replace(/ *\([^)]*\) */g, "")
+    let encodedArtistName = artistName.replace(/ /g, ',').replace(/ *\([^)]*\) */g, "")
+    let keywords = `"${encodedAlbumName}" "${encodedArtistName}" -cd -cassette -7" -10" -tote  -"vinyl sticker" -magazines -single`
+    keywords = keywords.replace(/&/g, '%20')
+    keywords = encodeURI(keywords)
 
     let url = `https://svcs.ebay.com/services/search/FindingService/v1`
         + `?OPERATION-NAME=findItemsAdvanced`
@@ -45,20 +47,26 @@ async function getAlbums(albumName, artistName, spinner) {
         + `&itemFilter(0).name=MaxPrice`
         + `&itemFilter(0).value=${config.ebay.maxprice}`
 
-    let response = JSON.parse(await requestPromise(url)).findItemsAdvancedResponse[0].searchResult[0].item
-    
-    if (response === undefined || response === null)
-        return null
+    try {
+        let response = JSON.parse(await requestPromise(url)).findItemsAdvancedResponse[0].searchResult[0].item
+        
+        if (response === undefined || response === null)
+            return null
 
-    let processedResults = processResults(response)
-    
-    return processedResults
+        let processedResults = processResults(albumName, artistName, response)
+        
+        return processedResults    }
+    catch{
+        return null
+    }
 }
 
-function processResults(data) {
+function processResults(album, artist, data) {
     try {
         return data.map(x => 
             ({
+                album: album,
+                artist: artist,
                 title: x.title[0],
                 subtitle: (x.subtitle === undefined) ? null : x.subtitle[0],
                 url: x.viewItemURL,

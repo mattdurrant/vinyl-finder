@@ -19,7 +19,6 @@ async function upload(fileName) {
         spinner.succeed(`${fileName} uploaded.`)
     }
     catch(err) {
-        console.log(err)
         spinner.fail(`${fileName} failed to upload.`)
     }   
     
