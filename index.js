@@ -3,24 +3,17 @@ const ebay      = require('./ebay.js')
 const output    = require('./output.js')
 const uploader  = require('./uploader.js')
 const schedule  = require('node-schedule')
+const tophat    = require('./tophat.js')
  
 ; (async () => {
-  console.log('Initial search.')
-  
   await findVinyl();
-
-  console.log('Switching to hourly searches.')
-
-  schedule.scheduleJob('0 * * * *', function(){
-    console.log(`Finding vinyl at ${new Date().toISOString()}`)
-    findVinyl()
-  });
 })()
 
 async function findVinyl() {
   let albums = await spotify.getAlbums()
   let results = await ebay.getVinyl(albums)
-
+  // results.push(await tophat.getVinyl(albums))
+  
   if (results === null)
     return
 

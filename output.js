@@ -1,5 +1,6 @@
 const fs        = require('fs');
 const config    = require('./config.json')
+const moment    = require('moment')
 
 async function writeToHtml(results) {
     let filename = config.filename
@@ -25,6 +26,7 @@ function buildHtml(results) {
     header += `<script>$(document).ready( function () { $('#results').DataTable({ paging: false, "columns": [{ "orderable": false }, null, null, null ] }); } );</script>`
 
     let body = `<div id="page" class="site"><div class="entry-content e-content"><header class="entry-header"><h1 class="entry-title p-name">Vinyl Finder</h1></header>`
+    body += `<p>Last Updated: ${moment().format("dddd, MMMM Do YYYY, h:mm:ss a")}</p>`
     body += `<table id="results" border="1"><thead><tr><th></th><th>Title</th><th>Price</th><th>Ending</th></tr></thead><tbody>`
 
     results = results.sort(
@@ -42,7 +44,7 @@ function buildHtml(results) {
         body += `${results[i].listingType == 'StoreInventory' || results[i].listingType == 'FixedPrice' ? '<div style="color:green; font-weight:bold">Buy It Now</div>' : '<div style="color:red">Auction</div>' }`
         body += `</td>`
         body += `<td>&pound;${results[i].totalPrice}</td>`
-        body += `<td><span class="endTime">${results[i].endTime}</span></td>`
+        body += `<td><span class="endTime">${results[i].endTime === null ? 'No end date' :  results[i].endTime}</span></td>`
         body += `</tr>`
     }
     body += `</tbody></table></div></div>`

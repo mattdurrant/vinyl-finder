@@ -55,7 +55,8 @@ async function getAlbums(albumName, artistName, spinner) {
 
         let processedResults = processResults(albumName, artistName, response)
         
-        return processedResults    }
+        return processedResults    
+    }
     catch{
         return null
     }
