@@ -9,6 +9,8 @@ let spotifyApi = new SpotifyWebApi({
 
 async function getAlbums() {
     await setSpotifyCredentials()
+
+    let excludedAlbums = await getExcludedAlbums();
     let playlistIds = config.spotify.playlistIds.split(',')
     let albums = []
 
@@ -27,6 +29,9 @@ async function getAlbums() {
         for (let track of tracks) {
           if (track.albumId === null) 
             continue
+
+          if (excludedAlbums.findIndex(r => r.albumId === track.albumId) !== -1) 
+            continue;
           
           if (results.findIndex(r => r.albumId === track.albumId) === -1) {
             results.push({ albumId: track.albumId, tracks: [], totalTracks: track.totalTracks, percentage: null, albumName: track.albumName, artistName: track.artistName })
@@ -49,6 +54,41 @@ async function getAlbums() {
     
     return albums
 }
+
+async function getExcludedAlbums() {
+  let excludedPlaylistIds = config.spotify.excludedPlaylistIds.split(',')
+
+  let excludedAlbums = []
+
+  for (let i = 0; i < excludedPlaylistIds.length; i++) {
+    let excludedPlaylistId = excludedPlaylistIds[i]
+    
+    let excludedPlaylistData = await getPlaylist(excludedPlaylistId),
+      results   = [], 
+      pageSize  = 100,
+      spinner   = ora(`Loading excluded playlist ${excludedPlaylistData.name}`).start()
+  
+    for(let offset = 0; offset < excludedPlaylistData.totalTracks; offset += pageSize) {
+      spinner.text = `Loading tracks ${offset}-${Math.min(offset + pageSize, excludedPlaylistData.totalTracks)} of ${excludedPlaylistData.totalTracks} for '${excludedPlaylistData.name}'.`
+      let tracks = await getPlaylistTracksPage(excludedPlaylistId, offset, pageSize) 
+  
+      for (let track of tracks) {
+        if (track.albumId === null) 
+          continue
+        
+        if (results.findIndex(r => r.albumId === track.albumId) === -1) {
+          results.push({ albumId: track.albumId })
+        }
+      }
+    }
+    spinner.succeed(`${excludedPlaylistData.totalTracks} tracks for '${excludedPlaylistData.name}' loaded.`)
+    
+    excludedAlbums = excludedAlbums.concat(results)
+  }
+  
+  return excludedAlbums
+}
+
 
 async function setSpotifyCredentials() {
     await spotifyApi

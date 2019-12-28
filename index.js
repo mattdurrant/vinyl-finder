@@ -19,4 +19,5 @@ async function findVinyl() {
 
   let htmlFile = await output.writeToHtml(results)
   await uploader.upload(htmlFile)
+  process.exit()
 }

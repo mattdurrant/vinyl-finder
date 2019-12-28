@@ -17,11 +17,18 @@ async function getVinyl(albums) {
         }
     }
     
+    results = dedupe(results, 'itemId')
     results = results.filter(r => r.totalPrice <= config.ebay.maxprice)
     results = results.filter(r => r.listingType == 'StoreInventory' || r.listingType == 'FixedPrice' || moment.duration(moment(r.endTime, "YYYY-MM-DDTHH:mm:SS.SSSSZ").diff(moment())).asHours() < 24)
 
     spinner.succeed(`${results.length} vinyl records found`)
     return results
+}
+
+function dedupe(myArr, prop) {
+    return myArr.filter((obj, pos, arr) => {
+        return arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos;
+    });
 }
 
 async function getAlbums(albumName, artistName, spinner) {
@@ -66,6 +73,7 @@ function processResults(album, artist, data) {
     try {
         return data.map(x => 
             ({
+                itemId: x.itemId[0],
                 album: album,
                 artist: artist,
                 title: x.title[0],
