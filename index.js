@@ -2,7 +2,6 @@ const spotify   = require('./spotify.js')
 const ebay      = require('./ebay.js')
 const output    = require('./output.js')
 const uploader  = require('./uploader.js')
-const schedule  = require('node-schedule')
 const tophat    = require('./tophat.js')
  
 ; (async () => {
